@@ -1,0 +1,31 @@
+{
+  "CHISTIAN VASQUEZ": {
+    "position": "SAFETY",
+    "rate": 75.0,
+    "last_seen": "2026-09-20"
+  },
+  "JUAN A SANTOS C": {
+    "position": "MECHANIC",
+    "intal_rate": 23.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-20"
+  },
+  "EDWIN HUETE RODRIGUEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-20"
+  },
+  "ERLIN NAHUM ALBERTO ALVARENGA": {
+    "position": "MECHANIC",
+    "intal_rate": 23.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-20"
+  },
+  "JUAN TENORIO GARCIA": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-20"
+  }
+}

@@ -1,0 +1,380 @@
+{
+  "AGUSTIN SANCHEZ MARTINEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "ANA CRUZ": {
+    "position": "SPOTTER",
+    "intal_rate": 16.0,
+    "rate": 21.0,
+    "last_seen": "2026-09-20"
+  },
+  "ANNA SANTIAGO": {
+    "position": "SPOTTER",
+    "intal_rate": 17.0,
+    "rate": 21.0,
+    "last_seen": "2026-08-16"
+  },
+  "ANTHONY WYNN": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-02"
+  },
+  "BLANCA HERNANDEZ": {
+    "position": "SPOTTER",
+    "intal_rate": 16.0,
+    "rate": 21.0,
+    "last_seen": "2026-09-06"
+  },
+  "CARLOS S CARIAS BLANCO": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "CELSO MENDOZA": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "CHAD WYNN": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-02"
+  },
+  "DARVIN ARGUETA DEL CID": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "DORIS YOLANDA RAMOS GONZALEZ": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-08-02"
+  },
+  "ELMER CRUZ": {
+    "position": "MASTER MECHANIC",
+    "intal_rate": 24.0,
+    "rate": 30.0,
+    "last_seen": "2026-09-06"
+  },
+  "ERVING TALAVERA": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "FRANCISCO VALDIVIESO": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "FREDDY FONSECA": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-09-20"
+  },
+  "GUILLERMO NIZ LUCAS": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-08-16"
+  },
+  "GUSTAVO BARDALES VIRULA": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "IVAN GOMEZ GUTIERREZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "IVAN RODRIGUEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-02"
+  },
+  "JAVIER H PINEDA TROCHEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 23.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "JOEL RODRIGUEZ REDONDA": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-06"
+  },
+  "JOHNNY DE LEON": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-09-20"
+  },
+  "JOSE ANTONIO GARCIA HERNANDEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "JOSUE ELI HERNANDEZ LAZO": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "JUAN M HERNANDEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 23.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "LESMY MEMBRANO GONZALEZ": {
+    "position": "HELPER",
+    "intal_rate": 18.0,
+    "rate": 25.0,
+    "last_seen": "2026-09-06"
+  },
+  "LUIS VASQUEZ": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-09-20"
+  },
+  "MARCIO ANTONIO DIAZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-02"
+  },
+  "MARIA DEL ROSARIO DOMINGUEZ": {
+    "position": "SPOTTER",
+    "intal_rate": 16.0,
+    "rate": 21.0,
+    "last_seen": "2026-08-02"
+  },
+  "MAYRO A DEL CID": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-13"
+  },
+  "NEHEMIAS DE LEON": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "OLGA MARISOL MUNOZ VASQUEZ": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-08-16"
+  },
+  "SAIRA TATIANA RAMIREZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "SINDY ROSIBEL AGUILAR": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-06"
+  },
+  "STEVEN OVIEDO": {
+    "position": "OSHA 30 COORDINATOR",
+    "intal_rate": 25.0,
+    "rate": 45.0,
+    "last_seen": "2026-09-20"
+  },
+  "YAEKI CARELA": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-06"
+  },
+  "ALMA DIAZ": {
+    "position": "SPOTTER",
+    "intal_rate": 16.0,
+    "rate": 21.0,
+    "last_seen": "2026-09-20"
+  },
+  "CRISTINA GUDIEL DE LA CRUZ": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-09-06"
+  },
+  "ISAIAS PEREZ LOPEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 20.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "JACOB SINAI MERINO SANTIAGO": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-06"
+  },
+  "JARVIN R RIVERA PONCE": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "JESUS RAFAEL SALAZAR": {
+    "position": "SPOTTER",
+    "intal_rate": 16.0,
+    "rate": 21.0,
+    "last_seen": "2026-08-16"
+  },
+  "JOHNNY OCHOA": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-09-06"
+  },
+  "JOSE TAPIA": {
+    "position": "MECHANIC",
+    "intal_rate": 24.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-06"
+  },
+  "JUANA SANCHEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "MARCOS DENIS CASTRO BENITEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "ORLANDO GARCIA CRUZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "RODOLFO BARDALES TOBAR": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "ROSA MIRIAN CRUZ": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-09-20"
+  },
+  "SILVESTRE MORALES MOJICA": {
+    "position": "MECHANIC",
+    "intal_rate": 24.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "SIXTO YEPES": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "URSULO MANUEL REYES": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-08-16"
+  },
+  "WERLY FARES GONZALEZ": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-09-20"
+  },
+  "YAZMIN JACOME": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-08-16"
+  },
+  "URSULO REYES RODRIGUEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-06"
+  },
+  "IVAN GOMEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "NAIROVI CARDENAS FUENTES": {
+    "position": "SPOTTER",
+    "intal_rate": 17.0,
+    "rate": 21.0,
+    "last_seen": "2026-09-13"
+  },
+  "ALEXANDER YANEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 24.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "ERVING TALABERA": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "JOEL REDONDA": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "JONY O CORRALES Z": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 25.0,
+    "last_seen": "2026-09-20"
+  },
+  "SINDY ROSIBEL AGUILAR LOPEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "URSULO MANUEL REYES RODRIGUEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  },
+  "YAKEI LOPEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 28.0,
+    "last_seen": "2026-09-20"
+  }
+}

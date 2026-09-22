@@ -1,0 +1,25 @@
+from profiles.schema import SimpleWeeklyProfile
+
+PROFILE = SimpleWeeklyProfile(
+    project_name="JJ Exterior",
+    source_sheet="Sheet1",
+    source_name_col=3,
+    source_skill_col=8,
+    source_day_cols=[9, 10, 11, 12, 13, 14, 15],
+    source_reg_col=16,
+    source_ot_col=17,
+    source_data_start_row=9,
+    dest_sheet="PH",
+    dest_name_col=2,
+    dest_skill_col=3,
+    dest_intal_rate_reg_col=4,
+    dest_rate_reg_col=6,
+    dest_day_cols=[8, 9, 10, 11, 12, 13, 14],
+    dest_reg_col=15,
+    dest_ot_col=16,
+    dest_data_start_row=10,
+    dest_data_end_row=34,
+    dest_totals_row=35,
+    reg_ot_strategy="exact_source",
+    merge_positions={"FINISHER": "MECHANIC"},
+)

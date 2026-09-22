@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Resultado — {{ profile_name }}</title>
+<style>
+  :root { --accent:#2563eb; --bg:#f7f8fb; --card:#fff; --border:#e2e5eb; --text:#1c2333; --warn:#b45309; --warnbg:#fffbeb; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--text); margin:0; padding:40px 20px; }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  .card { background: var(--card); border:1px solid var(--border); border-radius:14px; padding:28px; margin-bottom:20px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 15px; margin: 0 0 12px; }
+  p.sub { color:#5b6272; margin:0 0 20px; font-size: 14px; }
+  .stat { display:inline-block; background:#eef2ff; color:var(--accent); font-weight:700; font-size:20px; border-radius:10px; padding:10px 16px; margin-right:10px; }
+  .stat span { display:block; font-size:11px; font-weight:600; color:#5b6272; margin-top:2px; }
+  table { width:100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); }
+  th { color:#5b6272; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.02em; }
+  .warnbox { background: var(--warnbg); border:1px solid #fde68a; border-radius:10px; padding:16px; margin-bottom:8px; }
+  .warnbox b { color: var(--warn); }
+  .empty { color:#8a93a6; font-size:13px; font-style:italic; }
+  .btn { display:inline-block; margin-top:6px; padding:13px 22px; background:var(--accent); color:#fff; border-radius:8px; font-weight:600; text-decoration:none; font-size:15px; }
+  .btn:hover { background:#1d4ed8; }
+  a.back { color:#5b6272; font-size:13px; text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>{{ profile_name }}</h1>
+    <p class="sub">Revision antes de entregar el archivo final &middot; motor: {{ pipeline }}</p>
+    {% if cobrar_warning %}
+    <div class="warnbox"><b>Atencion:</b> {{ cobrar_warning }}</div>
+    {% endif %}
+    {% for n in notes %}
+    <div class="warnbox">{{ n }}</div>
+    {% endfor %}
+    <div class="stat">{{ matched_count }}<span>emparejados</span></div>
+    <div class="stat">{{ missing_people|length }}<span>faltantes</span></div>
+    <div class="stat">{{ ambiguous|length }}<span>ambiguos</span></div>
+  </div>
+
+  {% if missing_people %}
+  <div class="card">
+    <h2>Trabajaron pero no estan en el roster</h2>
+    <table>
+      <tr><th>Nombre</th><th>Posicion</th><th>Lun</th><th>Mar</th><th>Mie</th><th>Jue</th><th>Vie</th><th>Sab</th><th>Dom</th><th>REG</th><th>OT</th></tr>
+      {% for p in missing_people %}
+      <tr>
+        <td>{{ p.name }}</td><td>{{ p.skill }}</td>
+        {% for d in p.days %}<td>{{ d if d else "" }}</td>{% endfor %}
+        <td>{{ p.source_reg }}</td><td>{{ p.source_ot }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+
+  {% if ambiguous %}
+  <div class="card">
+    <h2>Necesitan confirmacion (nombre ambiguo)</h2>
+    {% for name, candidates in ambiguous %}
+    <div class="warnbox"><b>{{ name }}</b> podria ser varias personas del roster — se dejo sin llenar hasta que confirmes.</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <h2>Desglose REG / OT por posicion</h2>
+    <table>
+      <tr><th>Posicion</th><th>REG</th><th>OT</th></tr>
+      {% for pos, v in breakdown %}
+      <tr><td>{{ pos }}</td><td>{{ v.reg }}</td><td>{{ v.ot }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="card" style="text-align:center;">
+    <a class="btn" href="/download/{{ download_token }}">Descargar {{ output_name }}</a>
+    <div style="margin-top:14px;"><a class="back" href="/">&larr; Procesar otro archivo</a></div>
+  </div>
+</div>
+</body>
+</html>

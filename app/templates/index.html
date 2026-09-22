@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Automatizacion de Timesheets</title>
+<style>
+  :root { --accent:#2563eb; --bg:#f7f8fb; --card:#fff; --border:#e2e5eb; --text:#1c2333; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--text); margin:0; padding:40px 20px; }
+  .card { max-width: 560px; margin: 0 auto; background: var(--card); border:1px solid var(--border); border-radius:14px; padding:32px; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  p.sub { color:#5b6272; margin:0 0 28px; font-size: 14px; }
+  label { display:block; font-size:13px; font-weight:600; margin: 18px 0 6px; color:#39404f; }
+  select, input[type=file] { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; background:#fff; }
+  button { margin-top: 26px; width:100%; padding:13px; background:var(--accent); color:#fff; border:none; border-radius:8px; font-size:15px; font-weight:600; cursor:pointer; }
+  button:hover { background:#1d4ed8; }
+  .badge { display:inline-block; background:#eef2ff; color:var(--accent); font-size:12px; font-weight:600; padding:3px 9px; border-radius:999px; margin-bottom:14px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">DEMO &middot; Prueba de concepto</div>
+    <h1>Procesar Timesheet</h1>
+    <p class="sub">Sube el archivo fuente y la plantilla destino. El sistema aplica las mismas reglas que hoy se hacen a mano.</p>
+    <form action="/process" method="post" enctype="multipart/form-data">
+      <label>Nombre del proyecto</label>
+      <input type="text" name="project" placeholder="ej. Precision Walls, KHSS..." required>
+
+      <label>Archivo fuente (timesheet del lider de proyecto)</label>
+      <input type="file" name="source_file" accept=".xlsx" required>
+
+      <label>Plantilla destino</label>
+      <input type="file" name="template_file" accept=".xlsx" required>
+
+      <button type="submit">Procesar archivo</button>
+    </form>
+  </div>
+</body>
+</html>
