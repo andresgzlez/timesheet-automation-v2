@@ -85,7 +85,7 @@ def save_global(store: dict):
     GLOBAL_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False))
 
 
-def _tokens_fuzzy_match(a_tokens: list[str], b_tokens: list[str], cutoff: float = 0.82) -> bool:
+def _tokens_fuzzy_match(a_tokens: list[str], b_tokens: list[str], cutoff: float = 0.8) -> bool:
     """Como is_subsequence, pero cada palabra puede diferir un poco (permite
     errores de tipeo por palabra, ej. "MATUTE" vs "MATURE" -> 0.83), en vez
     de exigir la palabra exacta. Compara la lista mas corta contra la mas

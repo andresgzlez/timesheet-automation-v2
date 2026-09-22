@@ -50,6 +50,7 @@ def build_profile_auto(project_name: str, source_ws, dest_ws, dest_sheet_name: s
         dest_data_start_row=d_start,
         dest_data_end_row=d_end,
         dest_totals_row=d_totals,
+        dest_row_num_col=(d.name_col - 1) if d.name_col > 1 else None,
         reg_ot_strategy="exact_source",
         merge_positions=merge_positions or DEFAULT_MERGE_POSITIONS,
     )

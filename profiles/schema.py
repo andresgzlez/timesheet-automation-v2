@@ -42,6 +42,7 @@ class SimpleWeeklyProfile:
     dest_data_start_row: int
     dest_data_end_row: int
     dest_totals_row: int | None = None   # fila con las formulas =SUM(...) del roster
+    dest_row_num_col: int | None = None  # columna "No" (numero de fila), normalmente name_col - 1
 
     # --- Reglas ---
     reg_ot_strategy: str = "exact_source"  # "exact_source" | "weekly_40_threshold"

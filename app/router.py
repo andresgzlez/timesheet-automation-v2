@@ -14,7 +14,10 @@ import openpyxl
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from engine.process_simple import process as process_simple, write_result as write_simple, add_missing_employees, sync_rate_store
+from engine.process_simple import (
+    process as process_simple, write_result as write_simple, add_missing_employees, sync_rate_store,
+    roster_position_breakdown, write_invoice_totals,
+)
 from engine import rate_store as rate_store_mod
 from engine.process_auto import build_profile_auto
 from engine.process_daisy import read_daisy_source, write_daisy_result
@@ -108,12 +111,21 @@ def _process_standard(project_name, source_ws, dest_wb, dest_ws, output_path):
     rate_store_mod.save(project_name, store)
     rate_store_mod.save_global(gstore)
 
+    # horas reales por posicion, ya con los agregados incluidos -- se usa
+    # para el resumen y, si la plantilla trae el cuadro de "invoice"
+    # (horas x tarifa debajo del roster), para dejarlo resuelto/verificado
+    # en vez de un numero viejo copiado a mano.
+    real_breakdown = roster_position_breakdown(dest_ws, profile)
+    invoice_updated = write_invoice_totals(dest_ws, profile, real_breakdown)
+
     dest_wb.save(output_path)
 
-    breakdown = sorted(result.position_breakdown.items())
+    breakdown = sorted(real_breakdown.items())
     known_added = [a for a in added if a[2]]
     new_added = [a for a in added if not a[2]]
     note = []
+    if invoice_updated:
+        note.append("Se actualizo el cuadro de INVOICE (horas por posicion) al final de la hoja con las horas reales de esta semana -- revisalo antes de facturar.")
     if known_added:
         names = ", ".join(e.name for _, e, _ in known_added)
         note.append(f"{len(known_added)} persona(s) que ya conociamos (de este u otro proyecto), agregada(s) con su INTAL_RATE real: {names}.")

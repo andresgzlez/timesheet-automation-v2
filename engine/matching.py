@@ -16,6 +16,7 @@ Reglas que replica:
   marcada para revision humana en vez de adivinar (regla de Project Daisy)
 """
 
+import difflib
 import re
 from dataclasses import dataclass, field
 
@@ -55,9 +56,29 @@ def is_subsequence(needle_tokens: list[str], haystack_tokens: list[str]) -> bool
     return all(tok in it for tok in needle_tokens)
 
 
+def _is_subsequence_fuzzy(needle_tokens: list[str], haystack_tokens: list[str], cutoff: float = 0.8) -> bool:
+    """Como is_subsequence, pero cada palabra puede diferir un poco (permite
+    errores de tipeo/variantes de apellido por palabra, ej. "MATUTE" vs
+    "MATURE" -> 0.83), en vez de exigir la palabra exacta."""
+    it = iter(haystack_tokens)
+    for tok in needle_tokens:
+        found = False
+        for cand in it:
+            if tok == cand or difflib.SequenceMatcher(None, tok, cand).ratio() >= cutoff:
+                found = True
+                break
+        if not found:
+            return False
+    return True
+
+
 def names_match(source_name: str, dest_name: str) -> bool:
     """True si alguna variante del nombre fuente matchea alguna variante del
-    nombre destino via subsecuencia de tokens (en cualquier direccion)."""
+    nombre destino via subsecuencia de tokens (en cualquier direccion).
+    Primero exige coincidencia exacta de palabra; si eso falla, intenta con
+    tolerancia a variantes de tipeo por palabra (mismo criterio que la
+    memoria de tarifas) -- sigue exigiendo que TODOS los tokens del nombre
+    mas corto aparezcan, en orden, solo que cada uno puede diferir un poco."""
     src_variants = name_variants(source_name)
     dst_variants = name_variants(dest_name)
     for s in src_variants:
@@ -65,6 +86,12 @@ def names_match(source_name: str, dest_name: str) -> bool:
         for d in dst_variants:
             d_tokens = d.split()
             if is_subsequence(s_tokens, d_tokens) or is_subsequence(d_tokens, s_tokens):
+                return True
+    for s in src_variants:
+        s_tokens = s.split()
+        for d in dst_variants:
+            d_tokens = d.split()
+            if _is_subsequence_fuzzy(s_tokens, d_tokens) or _is_subsequence_fuzzy(d_tokens, s_tokens):
                 return True
     return False
 

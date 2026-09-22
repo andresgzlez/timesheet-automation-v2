@@ -124,6 +124,20 @@ def write_result(dest_ws, profile, result: ProcessResult):
         dest_ws.cell(row, profile.dest_reg_col).value = emp.source_reg
         dest_ws.cell(row, profile.dest_ot_col).value = emp.source_ot
 
+    # La plantilla destino que se sube cada semana suele ser una copia de
+    # la semana anterior ya llena -- a quien SIGUE en el roster pero no
+    # trabajo (o no vino) esta semana hay que borrarle las horas viejas,
+    # si no se quedan sumando de mas en el total.
+    unmatched_rows = set(range(profile.dest_data_start_row, profile.dest_data_end_row + 1)) - set(result.filled_rows.keys())
+    for row in unmatched_rows:
+        name = dest_ws.cell(row, profile.dest_name_col).value
+        if not name or not str(name).strip():
+            continue
+        for col in profile.dest_day_cols:
+            dest_ws.cell(row, col).value = None
+        dest_ws.cell(row, profile.dest_reg_col).value = 0
+        dest_ws.cell(row, profile.dest_ot_col).value = 0
+
 
 def add_missing_employees(dest_ws, profile, missing_people: list,
                            rate_store: dict | None = None, global_store: dict | None = None) -> list:
@@ -156,19 +170,23 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
     if not missing_people:
         return []
 
-    count = len(missing_people)
-    old_end = profile.dest_data_end_row
-    insert_at = old_end + 1
-    style_row = old_end if old_end >= profile.dest_data_start_row else None
+    def _first_token(name: str) -> str:
+        parts = name.strip().split()
+        return parts[0].upper() if parts else ""
 
-    # antes de insertar (que borra los valores de la fila de referencia),
-    # guardamos las formulas "propias de su fila" que trae esa fila de
-    # referencia -- por ejemplo columnas de monto ($) tipo =O14*D14 -- para
-    # replicarlas en cada fila nueva, adaptadas a su propio numero de fila.
+    original_end = profile.dest_data_end_row
+    # fila de referencia para copiar estilo y formulas ($ por fila) -- se
+    # toma la ultima del roster ORIGINAL (antes de agregar a nadie) y no
+    # cambia aunque las inserciones muevan cosas de lugar; el numero de
+    # fila que aparece LITERAL en esas formulas tampoco cambia (se guarda
+    # aparte de donde vive fisicamente esa fila de estilo en la hoja).
+    style_row_value = original_end if original_end >= profile.dest_data_start_row else None
+    style_row_current = style_row_value
+
     template_formulas = {}
-    if style_row:
+    if style_row_value:
         for c in range(1, dest_ws.max_column + 1):
-            v = dest_ws.cell(style_row, c).value
+            v = dest_ws.cell(style_row_value, c).value
             if isinstance(v, str) and v.startswith("="):
                 template_formulas[c] = v
 
@@ -176,12 +194,43 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
                      profile.dest_reg_col, profile.dest_ot_col, *profile.dest_day_cols}
     if profile.dest_skill_col:
         written_cols.add(profile.dest_skill_col)
+    if profile.dest_row_num_col:
+        written_cols.add(profile.dest_row_num_col)
 
-    insert_rows_preserving_formulas(dest_ws, insert_at, count, style_template_row=style_row)
+    # la plantilla se organiza por orden alfabetico (por primer nombre) --
+    # cada persona nueva se inserta en su lugar, no amontonada al final.
+    # Se procesan en ese mismo orden para que, si hay varias, tambien
+    # queden bien ordenadas entre si.
+    ordered_missing = sorted(missing_people, key=lambda e: _first_token(e.name))
 
     added = []
-    for i, emp in enumerate(missing_people):
-        row = insert_at + i
+    for i, emp in enumerate(ordered_missing):
+        token = _first_token(emp.name)
+        insert_at = profile.dest_data_end_row + 1  # por defecto, al final del roster
+        for r in range(profile.dest_data_start_row, profile.dest_data_end_row + 1):
+            existing_name = dest_ws.cell(r, profile.dest_name_col).value
+            if existing_name and _first_token(str(existing_name)) > token:
+                insert_at = r
+                break
+
+        at_true_end = insert_at == profile.dest_data_end_row + 1
+        pre_insert_end = profile.dest_data_end_row
+
+        insert_rows_preserving_formulas(dest_ws, insert_at, 1, style_template_row=style_row_current)
+        row = insert_at
+        if style_row_current is not None and insert_at <= style_row_current:
+            style_row_current += 1
+
+        profile.dest_data_end_row += 1
+        if profile.dest_totals_row is not None:
+            if insert_at <= profile.dest_totals_row:
+                profile.dest_totals_row += 1
+            if at_true_end:
+                # la referencia final del SUM (ej. =SUM(H10:H70)) no se
+                # desplaza sola cuando se agrega justo despues del ultimo
+                # dato -- hay que estirarla a mano.
+                extend_sum_ranges(dest_ws, profile.dest_totals_row, pre_insert_end, profile.dest_data_end_row)
+
         known_project = lookup(rate_store, emp.name) if rate_store else None
         known_global = lookup(global_store, emp.name) if global_store else None
         project_fresh = bool(known_project) and not is_stale(known_project)
@@ -195,16 +244,23 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
             if not intal_rate:
                 intal_rate = (known_global or {}).get("intal_rate") if global_fresh else None
             intal_rate = intal_rate or 0
-            rate = (known_project or {}).get("rate", 0) if project_fresh else 0
             has_intal_rate = bool(intal_rate)
         else:
             # no vigente en ningun lado (nunca la vimos, o hace +3 meses):
-            # INTAL_RATE en 0 y amarillo, pero si sabemos su posicion se le
-            # pone la tarifa tipica que hoy se cobra por esa posicion aqui
+            # INTAL_RATE en 0 y amarillo
             intal_rate = 0
+            has_intal_rate = False
+
+        # RATE (lo que se cobra al cliente) es independiente de donde salio
+        # el INTAL_RATE: solo se usa si ESTE proyecto ya tiene su tarifa de
+        # cobro vigente para esta persona -- nunca se copia de otro
+        # proyecto ni del lado global. Si no, se cae a la tarifa tipica de
+        # su posicion en este proyecto (nunca se queda en 0 si se puede
+        # calcular).
+        rate = (known_project or {}).get("rate") if project_fresh else None
+        if not rate:
             position_for_rate = emp.skill or position_hint
             rate = (position_standard_rate(rate_store, position_for_rate) or 0) if rate_store else 0
-            has_intal_rate = False
 
         dest_ws.cell(row, profile.dest_name_col).value = emp.name
         if profile.dest_skill_col:
@@ -221,19 +277,23 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
         for c, formula in template_formulas.items():
             if c in written_cols:
                 continue
-            dest_ws.cell(row, c).value = rebase_formula_row(formula, style_row, row)
+            dest_ws.cell(row, c).value = rebase_formula_row(formula, style_row_value, row)
 
         if not has_intal_rate:
             highlight_row_yellow(dest_ws, row, profile.dest_name_col, profile.dest_ot_col)
         added.append((row, emp, has_intal_rate))
 
-    new_end = insert_at + count - 1
-    if profile.dest_totals_row is not None:
-        new_totals_row = profile.dest_totals_row + count
-        extend_sum_ranges(dest_ws, new_totals_row, old_end, new_end)
-        profile.dest_totals_row = new_totals_row
+    # renumerar la columna "No" de corrido (1,2,3...) sobre el roster ya
+    # completo -- mas simple y seguro que ir calculando el numero de cada
+    # fila nueva a medida que se insertan en distintos puntos de la lista.
+    if profile.dest_row_num_col:
+        n = 1
+        for r in range(profile.dest_data_start_row, profile.dest_data_end_row + 1):
+            name = dest_ws.cell(r, profile.dest_name_col).value
+            if name and str(name).strip():
+                dest_ws.cell(r, profile.dest_row_num_col).value = n
+                n += 1
 
-    profile.dest_data_end_row = new_end
     return added
 
 
@@ -288,3 +348,96 @@ def sync_rate_store(dest_ws, profile, filled_rows: dict, added: list, rate_store
             # guarda como si fuera confirmada -- solo la posicion, sin fecha.
             record(rate_store, emp.name, position=position)
             record_global(global_store, emp.name, position=position)
+
+
+def roster_position_breakdown(dest_ws, profile) -> dict:
+    """
+    Recalcula las horas REG/OT por posicion sumando DIRECTO de las filas
+    del roster ya escritas (matcheados + agregados) -- es el numero real
+    que quedo en el archivo, no el que traia la fuente, para poder usarlo
+    despues como verificacion/objetivo del bloque de "invoice".
+    """
+    breakdown: dict = {}
+    for r in range(profile.dest_data_start_row, profile.dest_data_end_row + 1):
+        name = dest_ws.cell(r, profile.dest_name_col).value
+        if not name or not str(name).strip():
+            continue
+        pos = dest_ws.cell(r, profile.dest_skill_col).value if profile.dest_skill_col else None
+        pos = (pos or "SIN CLASIFICAR").strip().upper()
+        pos = profile.merge_positions.get(pos, pos)
+        reg = dest_ws.cell(r, profile.dest_reg_col).value or 0
+        ot = dest_ws.cell(r, profile.dest_ot_col).value or 0
+        try:
+            reg = float(reg)
+        except (TypeError, ValueError):
+            reg = 0.0
+        try:
+            ot = float(ot)
+        except (TypeError, ValueError):
+            ot = 0.0
+        d = breakdown.setdefault(pos, {"reg": 0.0, "ot": 0.0})
+        d["reg"] += reg
+        d["ot"] += ot
+    return breakdown
+
+
+def write_invoice_totals(dest_ws, profile, breakdown: dict) -> bool:
+    """
+    Muchas plantillas traen, debajo del roster, un cuadro chico de
+    "invoice" (horas por posicion x tarifa = $ a facturar) que se llenaba
+    a mano cada semana y facilmente queda desactualizado. Si existe ese
+    cuadro (se detecta buscando una columna con encabezado "HRS"), se le
+    escriben las horas REG/OT reales de esta semana por posicion, para
+    que sirva como verificacion en vez de un numero viejo copiado.
+
+    No inventa filas nuevas ni adivina estructura -- solo escribe sobre
+    etiquetas que ya existen en la plantilla (ej. "MECHANIC REG HRS",
+    "SPOTTER OT") y que se puedan identificar con una posicion conocida
+    del roster. Si no encuentra el cuadro, no hace nada (no todas las
+    plantillas lo traen).
+
+    Devuelve True si encontro y actualizo el cuadro.
+    """
+    search_start = (profile.dest_totals_row or profile.dest_data_end_row) + 1
+    search_end = min(search_start + 60, dest_ws.max_row)
+    if search_start > search_end:
+        return False
+
+    hrs_col = None
+    for r in range(search_start, search_end + 1):
+        for c in range(1, dest_ws.max_column + 1):
+            v = dest_ws.cell(r, c).value
+            if isinstance(v, str) and v.strip().upper() == "HRS":
+                hrs_col = c
+                break
+        if hrs_col:
+            break
+    if not hrs_col:
+        return False
+
+    positions = {pos.strip().upper(): vals for pos, vals in breakdown.items()}
+    updated = False
+
+    for r in range(search_start, search_end + 1):
+        for c in range(1, dest_ws.max_column + 1):
+            label = dest_ws.cell(r, c).value
+            if not isinstance(label, str) or not label.strip():
+                continue
+            label_up = label.strip().upper()
+            tokens = label_up.split()
+            # exige la posicion Y una PALABRA (no subcadena -- "SPOTTER" ya
+            # contiene "OT" adentro, "sp-OT-ter") de horas REG/OT/HRS, para
+            # no confundir con otra tabla que solo menciona la posicion
+            # (ej. el cuadro de tarifa PROMEDIO por posicion)
+            if not any(tag in tokens for tag in ("REG", "OT", "HRS")):
+                continue
+            matched_pos = next((pos for pos in positions if pos and pos in tokens), None)
+            if not matched_pos:
+                continue
+            is_ot = "OT" in tokens
+            hours = positions[matched_pos]["ot" if is_ot else "reg"]
+            dest_ws.cell(r, hrs_col).value = round(hours, 2)
+            updated = True
+            break
+
+    return updated
