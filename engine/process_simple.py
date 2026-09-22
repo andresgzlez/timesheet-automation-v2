@@ -117,6 +117,28 @@ def process(source_ws, dest_ws, profile) -> ProcessResult:
 
 
 def write_result(dest_ws, profile, result: ProcessResult):
+    from engine.xlsx_writer import clear_row_fill
+
+    # la plantilla de esta semana suele ser una copia de la salida de la
+    # semana pasada, asi que cualquier color que haya quedado puesto en
+    # una fila (a mano, o de una version vieja de esta app) se arrastraria
+    # para siempre si no se limpia aca -- se quita ANTES de escribir nada,
+    # sobre todo el roster que ya existia (matcheado o no), para que cada
+    # corrida salga sin colores sueltos sin significado. El unico color
+    # que se pone a proposito sigue siendo el amarillo de "sin tarifa
+    # confirmada" en add_missing_employees.
+    fill_cols = [profile.dest_name_col, profile.dest_intal_rate_reg_col, profile.dest_rate_reg_col,
+                 profile.dest_reg_col, profile.dest_ot_col, *profile.dest_day_cols]
+    if profile.dest_skill_col:
+        fill_cols.append(profile.dest_skill_col)
+    if profile.dest_row_num_col:
+        fill_cols.append(profile.dest_row_num_col)
+    fill_col_start, fill_col_end = 1, max(fill_cols)
+    for row in range(profile.dest_data_start_row, profile.dest_data_end_row + 1):
+        name = dest_ws.cell(row, profile.dest_name_col).value
+        if name and str(name).strip():
+            clear_row_fill(dest_ws, row, fill_col_start, fill_col_end)
+
     for row, emp in result.filled_rows.items():
         for i, col in enumerate(profile.dest_day_cols):
             v = emp.days[i]

@@ -296,3 +296,23 @@ def highlight_row_yellow(ws, row: int, col_start: int, col_end: int):
     fill = PatternFill(start_color=YELLOW_FILL_RGB, end_color=YELLOW_FILL_RGB, fill_type="solid")
     for c in range(col_start, col_end + 1):
         ws.cell(row, c).fill = fill
+
+
+def clear_row_fill(ws, row: int, col_start: int, col_end: int):
+    """Quita cualquier relleno/color de fondo de una fila (columnas
+    col_start..col_end), dejandola sin relleno.
+
+    La plantilla que se sube cada semana suele ser una copia de la salida
+    de la semana anterior, asi que cualquier color que haya quedado puesto
+    (a mano, o por un bug de una version vieja de esta app que coloreaba
+    filas sin querer) se arrastra semana tras semana sin que nuestro
+    codigo lo haya pedido -- results en un roster donde cada quien
+    termina con "su color" al azar, sin ningun significado real. Se llama
+    sobre TODO el roster existente antes de escribir los datos de esta
+    semana, para que cada corrida salga limpia; el unico color que se
+    aplica a proposito de ahi en mas es el amarillo de
+    highlight_row_yellow (para alguien sin tarifa confirmada)."""
+    from openpyxl.styles import PatternFill
+    no_fill = PatternFill(fill_type=None)
+    for c in range(col_start, col_end + 1):
+        ws.cell(row, c).fill = no_fill
