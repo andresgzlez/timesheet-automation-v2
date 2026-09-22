@@ -164,7 +164,7 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
 
     Devuelve la lista de (row, SourceEmployee, tiene_intal_rate_vigente).
     """
-    from engine.xlsx_writer import insert_rows_preserving_formulas, extend_sum_ranges, highlight_row_yellow, rebase_formula_row
+    from engine.xlsx_writer import insert_rows_preserving_formulas_multi, extend_sum_ranges, highlight_row_yellow, rebase_formula_row
     from engine.rate_store import lookup, is_stale, position_standard_rate
 
     if not missing_people:
@@ -176,12 +176,8 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
 
     original_end = profile.dest_data_end_row
     # fila de referencia para copiar estilo y formulas ($ por fila) -- se
-    # toma la ultima del roster ORIGINAL (antes de agregar a nadie) y no
-    # cambia aunque las inserciones muevan cosas de lugar; el numero de
-    # fila que aparece LITERAL en esas formulas tampoco cambia (se guarda
-    # aparte de donde vive fisicamente esa fila de estilo en la hoja).
+    # toma la ultima del roster ORIGINAL (antes de agregar a nadie).
     style_row_value = original_end if original_end >= profile.dest_data_start_row else None
-    style_row_current = style_row_value
 
     template_formulas = {}
     if style_row_value:
@@ -199,38 +195,49 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
 
     # la plantilla se organiza por orden alfabetico (por primer nombre) --
     # cada persona nueva se inserta en su lugar, no amontonada al final.
-    # Se procesan en ese mismo orden para que, si hay varias, tambien
-    # queden bien ordenadas entre si.
     ordered_missing = sorted(missing_people, key=lambda e: _first_token(e.name))
 
-    added = []
-    for i, emp in enumerate(ordered_missing):
+    # primero se calculan TODAS las posiciones de insercion (en las
+    # coordenadas del roster ORIGINAL, antes de tocar nada) y recien
+    # despues se insertan todas juntas, en una sola pasada por la hoja --
+    # insertar una por una es correcto pero, en una plantilla con muchas
+    # columnas, cada pasada completa por la hoja puede tardar varios
+    # segundos; multiplicado por cada persona nueva, la app se puede
+    # colgar (fue un bug real: 4 personas nuevas llegaron a tardar casi
+    # un minuto).
+    existing_names = [
+        (r, str(dest_ws.cell(r, profile.dest_name_col).value).strip())
+        for r in range(profile.dest_data_start_row, original_end + 1)
+        if dest_ws.cell(r, profile.dest_name_col).value
+    ]
+    insert_ats = []
+    at_true_end_count = 0
+    for emp in ordered_missing:
         token = _first_token(emp.name)
-        insert_at = profile.dest_data_end_row + 1  # por defecto, al final del roster
-        for r in range(profile.dest_data_start_row, profile.dest_data_end_row + 1):
-            existing_name = dest_ws.cell(r, profile.dest_name_col).value
-            if existing_name and _first_token(str(existing_name)) > token:
+        insert_at = original_end + 1  # por defecto, al final del roster
+        for r, name in existing_names:
+            if _first_token(name) > token:
                 insert_at = r
                 break
+        if insert_at == original_end + 1:
+            at_true_end_count += 1
+        insert_ats.append(insert_at)
 
-        at_true_end = insert_at == profile.dest_data_end_row + 1
-        pre_insert_end = profile.dest_data_end_row
+    new_rows = insert_rows_preserving_formulas_multi(dest_ws, insert_ats, style_template_row=style_row_value)
 
-        insert_rows_preserving_formulas(dest_ws, insert_at, 1, style_template_row=style_row_current)
-        row = insert_at
-        if style_row_current is not None and insert_at <= style_row_current:
-            style_row_current += 1
+    total_count = len(ordered_missing)
+    profile.dest_data_end_row = original_end + total_count
+    if profile.dest_totals_row is not None:
+        profile.dest_totals_row += total_count
+        if at_true_end_count:
+            # la referencia final del SUM (ej. =SUM(H10:H70)) no se
+            # desplaza sola para las personas agregadas justo despues del
+            # ultimo dato -- hay que estirarla a mano por esas.
+            shifted_old_end = original_end + (total_count - at_true_end_count)
+            extend_sum_ranges(dest_ws, profile.dest_totals_row, shifted_old_end, profile.dest_data_end_row)
 
-        profile.dest_data_end_row += 1
-        if profile.dest_totals_row is not None:
-            if insert_at <= profile.dest_totals_row:
-                profile.dest_totals_row += 1
-            if at_true_end:
-                # la referencia final del SUM (ej. =SUM(H10:H70)) no se
-                # desplaza sola cuando se agrega justo despues del ultimo
-                # dato -- hay que estirarla a mano.
-                extend_sum_ranges(dest_ws, profile.dest_totals_row, pre_insert_end, profile.dest_data_end_row)
-
+    added = []
+    for emp, row in zip(ordered_missing, new_rows):
         known_project = lookup(rate_store, emp.name) if rate_store else None
         known_global = lookup(global_store, emp.name) if global_store else None
         project_fresh = bool(known_project) and not is_stale(known_project)

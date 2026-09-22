@@ -15,6 +15,7 @@ de celda ni los rangos de SUMA al insertar filas, hay que:
   6. Extender manualmente los rangos de SUMA que cubran las filas nuevas
 """
 
+import bisect
 import copy
 import re
 
@@ -116,6 +117,112 @@ def insert_rows_preserving_formulas(ws, insert_at: int, count: int, style_templa
                 cell.number_format = tmpl["number_format"]
 
     return new_start, new_end
+
+
+def insert_rows_preserving_formulas_multi(ws, insert_ats: list[int], style_template_row: int | None = None):
+    """
+    Igual que insert_rows_preserving_formulas, pero inserta UNA fila en
+    cada una de varias posiciones distintas (`insert_ats`, en coordenadas
+    de la hoja ANTES de insertar nada) en una sola pasada por toda la hoja.
+
+    Existe porque llamar insert_rows_preserving_formulas una vez POR
+    PERSONA (para poder ubicar a cada quien en su lugar alfabetico) es
+    O(filas x columnas) CADA VEZ -- en una plantilla con muchas columnas
+    (algunas traen cientos, casi todas vacias, pero openpyxl igual las
+    cuenta) eso puede tardar mas de un minuto con solo unas pocas personas
+    nuevas. Esta version hace ese trabajo pesado una unica vez sin
+    importar cuantas filas se esten insertando.
+
+    `insert_ats` debe venir en el orden final deseado (asc; si dos
+    entradas comparten la misma posicion, quedan una despues de la otra en
+    ese mismo orden). Devuelve la lista de filas fisicas nuevas, en ese
+    mismo orden.
+    """
+    if not insert_ats:
+        return []
+
+    sorted_ats = sorted(insert_ats)
+    count = len(sorted_ats)
+
+    def shift_for(row: int) -> int:
+        # cuantas inserciones caen en o antes de esta fila (original)
+        return bisect.bisect_right(sorted_ats, row)
+
+    max_row = ws.max_row
+    max_col = ws.max_column
+
+    snapshot = {}
+    for r in range(1, max_row + 1):
+        for c in range(1, max_col + 1):
+            cell = ws.cell(r, c)
+            snapshot[(r, c)] = {
+                "value": cell.value,
+                "font": copy.copy(cell.font),
+                "fill": copy.copy(cell.fill),
+                "border": copy.copy(cell.border),
+                "alignment": copy.copy(cell.alignment),
+                "number_format": cell.number_format,
+            }
+
+    merged_ranges = list(ws.merged_cells.ranges)
+    for mr in merged_ranges:
+        ws.unmerge_cells(str(mr))
+
+    style_row_snapshot = None
+    if style_template_row is not None:
+        style_row_snapshot = {
+            c: snapshot[(style_template_row, c)] for c in range(1, max_col + 1)
+        }
+
+    for r in range(1, max_row + 1):
+        for c in range(1, max_col + 1):
+            ws.cell(r, c).value = None
+
+    def _rewrite_formula_refs_multi(formula: str) -> str:
+        def repl(m):
+            col_abs, col, row_abs, row = m.groups()
+            row_num = int(row)
+            new_row = row_num + shift_for(row_num)
+            return f"{col_abs}{col}{row_abs}{new_row}"
+        return re.sub(r"(\$?)([A-Z]{1,3})(\$?)(\d+)", repl, formula)
+
+    for (r, c), data in snapshot.items():
+        new_r = r + shift_for(r)
+        cell = ws.cell(new_r, c)
+        value = data["value"]
+        if isinstance(value, str) and value.startswith("="):
+            value = "=" + _rewrite_formula_refs_multi(value[1:])
+        cell.value = value
+        cell.font = data["font"]
+        cell.fill = data["fill"]
+        cell.border = data["border"]
+        cell.alignment = data["alignment"]
+        cell.number_format = data["number_format"]
+
+    for mr in merged_ranges:
+        min_r = mr.min_row + shift_for(mr.min_row)
+        max_r = mr.max_row + shift_for(mr.max_row)
+        ws.merge_cells(start_row=min_r, start_column=mr.min_col, end_row=max_r, end_column=mr.max_col)
+
+    new_rows = [at + i for i, at in enumerate(sorted_ats)]
+
+    if style_row_snapshot:
+        for nr in new_rows:
+            for c in range(1, max_col + 1):
+                tmpl = style_row_snapshot[c]
+                cell = ws.cell(nr, c)
+                cell.value = None
+                cell.font = copy.copy(tmpl["font"])
+                cell.fill = copy.copy(tmpl["fill"])
+                cell.border = copy.copy(tmpl["border"])
+                cell.alignment = copy.copy(tmpl["alignment"])
+                cell.number_format = tmpl["number_format"]
+
+    # devolver en el orden en que el llamador paso insert_ats, no el orden
+    # ordenado -- como sorted() es estable y new_rows ya sale ascendente
+    # segun sorted_ats, alcanza con mapear cada insert_at original a su
+    # fila fisica en el mismo orden en que fueron apareciendo.
+    return new_rows
 
 
 def extend_sum_ranges(ws, row: int, old_end: int, new_end: int):

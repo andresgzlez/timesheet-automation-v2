@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+app/uploads/*
+app/outputs/*
+!app/uploads/.gitkeep
+!app/outputs/.gitkeep
+profiles/data/rates/*
+!profiles/data/rates/.gitkeep
+.DS_Store
