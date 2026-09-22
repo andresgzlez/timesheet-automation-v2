@@ -213,7 +213,13 @@ def insert_rows_preserving_formulas_multi(ws, insert_ats: list[int], style_templ
                 cell = ws.cell(nr, c)
                 cell.value = None
                 cell.font = copy.copy(tmpl["font"])
-                cell.fill = copy.copy(tmpl["fill"])
+                # el relleno/color de fondo de la fila de referencia NO se
+                # copia -- si esa fila tenia algun color puesto a mano (por
+                # cualquier motivo, sin relacion con la persona nueva), no
+                # tiene sentido que TODOS los agregados hereden ese mismo
+                # color. Fila nueva = sin relleno; el unico color que se
+                # pone a proposito es el amarillo de "sin tarifa
+                # confirmada" (ver highlight_row_yellow, mas abajo).
                 cell.border = copy.copy(tmpl["border"])
                 cell.alignment = copy.copy(tmpl["alignment"])
                 cell.number_format = tmpl["number_format"]
@@ -240,6 +246,31 @@ def extend_sum_ranges(ws, row: int, old_end: int, new_end: int):
                 rf":([A-Z]{{1,3}})\$?{old_end}\)",
                 rf":\g<1>{new_end})",
                 cell.value,
+            )
+
+
+def fix_sum_range_start(ws, row: int, start_row: int):
+    """
+    Fuerza el limite INICIAL de cualquier =SUM(COL#:...) en esta fila a
+    `start_row`. El limite inicial del roster (la primera fila de datos)
+    es un ancla fija que nunca deberia moverse -- pero si alguien nuevo se
+    inserta alfabeticamente ANTES del primer empleado (ej. el roster
+    empezaba en "Carlos" y ahora "Alicia" entra antes), el desplazamiento
+    generico de referencias de fila (pensado para que el limite FINAL
+    crezca) tambien mueve por error ese limite inicial, dejando fuera las
+    filas nuevas que quedaron arriba. Se llama despues de cualquier
+    insercion en el roster, sin importar donde haya caido.
+    """
+    for c in range(1, ws.max_column + 1):
+        cell = ws.cell(row, c)
+        v = cell.value
+        if isinstance(v, str) and v.upper().startswith("=SUM("):
+            cell.value = re.sub(
+                r"^(=SUM\()([A-Z]{1,3})\$?\d+",
+                rf"\g<1>\g<2>{start_row}",
+                v,
+                count=1,
+                flags=re.IGNORECASE,
             )
 
 

@@ -164,7 +164,7 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
 
     Devuelve la lista de (row, SourceEmployee, tiene_intal_rate_vigente).
     """
-    from engine.xlsx_writer import insert_rows_preserving_formulas_multi, extend_sum_ranges, highlight_row_yellow, rebase_formula_row
+    from engine.xlsx_writer import insert_rows_preserving_formulas_multi, extend_sum_ranges, fix_sum_range_start, highlight_row_yellow, rebase_formula_row
     from engine.rate_store import lookup, is_stale, position_standard_rate
 
     if not missing_people:
@@ -235,6 +235,12 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
             # ultimo dato -- hay que estirarla a mano por esas.
             shifted_old_end = original_end + (total_count - at_true_end_count)
             extend_sum_ranges(dest_ws, profile.dest_totals_row, shifted_old_end, profile.dest_data_end_row)
+        # el limite inicial del roster (dest_data_start_row) nunca se
+        # mueve, pase lo que pase -- si alguien nuevo entro justo al
+        # principio (antes del primer empleado que ya estaba), el
+        # desplazamiento general de referencias puede haberlo corrido por
+        # error.
+        fix_sum_range_start(dest_ws, profile.dest_totals_row, profile.dest_data_start_row)
 
     added = []
     for emp, row in zip(ordered_missing, new_rows):
