@@ -21,6 +21,23 @@ import re
 
 YELLOW_FILL_RGB = "FFFF00"
 
+# Colores fijos para diferenciar de un vistazo a que posicion pertenece
+# cada fila (roster y cuadros de resumen tipo "AVERAGE"/"INVOICE" al pie
+# de la hoja) -- confirmados por el cliente sobre una plantilla real:
+# HELPER azul, SAFETY verde, FOREMAN gris, SPOTTER durazno, MECHANIC sin
+# relleno (blanco). Una posicion que no este en este mapa (o que no
+# tengamos como identificar) se deja sin relleno -- mejor blanco que un
+# color inventado sin significado.
+POSITION_FILL_RGB = {
+    "HELPER": "ADD8E6",
+    "SAFETY": "C6E0B4",
+    "FOREMAN": "D9D9D9",
+    "SPOTTER": "FFD9B3",
+    "MECHANIC": None,
+    "LABOR": "FBE5D6",
+    "ELECTRICIAN": "FFE699",
+}
+
 
 def _shift_row(row: int, insert_at: int, count: int) -> int:
     return row + count if row >= insert_at else row
@@ -294,6 +311,27 @@ def highlight_row_yellow(ws, row: int, col_start: int, col_end: int):
     """Marca en amarillo una fila (empleado nuevo sin tarifa historica)."""
     from openpyxl.styles import PatternFill
     fill = PatternFill(start_color=YELLOW_FILL_RGB, end_color=YELLOW_FILL_RGB, fill_type="solid")
+    for c in range(col_start, col_end + 1):
+        ws.cell(row, c).fill = fill
+
+
+def _resolve_position_bucket(position: str | None, merge_positions: dict | None = None) -> str | None:
+    if not position:
+        return None
+    key = position.strip().upper()
+    if merge_positions:
+        key = merge_positions.get(key, key)
+    return key
+
+
+def apply_position_fill(ws, row: int, col_start: int, col_end: int, position: str | None,
+                         merge_positions: dict | None = None):
+    """Colorea una fila segun la posicion de la persona (POSITION_FILL_RGB),
+    o la deja sin relleno si la posicion no esta en el mapa conocido."""
+    from openpyxl.styles import PatternFill
+    bucket = _resolve_position_bucket(position, merge_positions)
+    rgb = POSITION_FILL_RGB.get(bucket) if bucket else None
+    fill = PatternFill(start_color=rgb, end_color=rgb, fill_type="solid") if rgb else PatternFill(fill_type=None)
     for c in range(col_start, col_end + 1):
         ws.cell(row, c).fill = fill
 

@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT))
 
 from engine.process_simple import (
     process as process_simple, write_result as write_simple, add_missing_employees, sync_rate_store,
-    roster_position_breakdown, write_invoice_totals,
+    roster_position_breakdown, write_invoice_totals, color_position_legend,
 )
 from engine import rate_store as rate_store_mod
 from engine.process_auto import build_profile_auto
@@ -117,6 +117,7 @@ def _process_standard(project_name, source_ws, dest_wb, dest_ws, output_path):
     # en vez de un numero viejo copiado a mano.
     real_breakdown = roster_position_breakdown(dest_ws, profile)
     invoice_updated = write_invoice_totals(dest_ws, profile, real_breakdown)
+    color_position_legend(dest_ws, profile)
 
     dest_wb.save(output_path)
 

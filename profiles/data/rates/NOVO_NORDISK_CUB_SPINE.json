@@ -12,7 +12,7 @@
     "last_seen": "2026-09-20"
   },
   "CARLOS CARRILLOS": {
-    "position": "FINISHER",
+    "position": "MECHANIC",
     "intal_rate": 23.0,
     "rate": 27.0,
     "last_seen": "2026-09-22"
@@ -120,7 +120,7 @@
     "last_seen": "2026-09-20"
   },
   "OSCAR NIETO DUBON": {
-    "position": "FINISHER",
+    "position": "MECHANIC",
     "intal_rate": 22.0,
     "rate": 27.0,
     "last_seen": "2026-09-22"
@@ -192,7 +192,7 @@
     "last_seen": "2026-08-16"
   },
   "CRISTOBAL COZ": {
-    "position": "MECH",
+    "position": "MECHANIC",
     "intal_rate": 22.0,
     "rate": 27.0,
     "last_seen": "2026-09-22"
@@ -216,7 +216,7 @@
     "last_seen": "2026-09-13"
   },
   "FERNANDO PEQUERO": {
-    "position": "LABOR",
+    "position": "SPOTTER",
     "intal_rate": 17.0,
     "rate": 20.0,
     "last_seen": "2026-09-22"
@@ -234,7 +234,7 @@
     "last_seen": "2026-09-20"
   },
   "JORGE SUAREZ": {
-    "position": "LABOR",
+    "position": "SPOTTER",
     "intal_rate": 17.0,
     "rate": 20.0,
     "last_seen": "2026-09-22"
@@ -406,9 +406,10 @@
     "last_seen": "2026-09-22"
   },
   "DANIEL SALAS": {
-    "position": "FINISHER",
+    "position": "MECHANIC",
     "intal_rate": 23.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 27.0
   },
   "DANIEL SANCHEZ": {
     "position": "SAFETY",
@@ -416,29 +417,34 @@
     "last_seen": "2026-09-22"
   },
   "DARWIN TEMAJ": {
-    "position": "MECH",
+    "position": "MECHANIC",
     "intal_rate": 23.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 27.0
   },
   "DOMINGO BARCENAS": {
-    "position": "MECH",
+    "position": "MECHANIC",
     "intal_rate": 22.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 27.0
   },
   "EDUVIGES ORROSTIETA": {
     "position": "SPOTTER",
     "intal_rate": 16.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 20.0
   },
   "EULALIO HERNANDEZ": {
-    "position": "FINISHER",
+    "position": "MECHANIC",
     "intal_rate": 22.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 27.0
   },
   "FLORENCIO SALINAS": {
-    "position": "FINISHER",
+    "position": "MECHANIC",
     "intal_rate": 21.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 27.0
   },
   "FREDY RODAS": {
     "position": "HELPER",
@@ -448,11 +454,14 @@
   "GREACE BERMUDEZ": {
     "position": "SPOTTER",
     "intal_rate": 17.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 20.0
   },
   "GUADALUPE DIAZ": {
-    "position": "FINISHER",
-    "last_seen": "2026-09-22"
+    "position": "MECHANIC",
+    "last_seen": "2026-09-22",
+    "intal_rate": 21.0,
+    "rate": 27.0
   },
   "IRVING BERNAL": {
     "position": "HELPER",
@@ -468,12 +477,14 @@
   "JAZMIN PINTO": {
     "position": "SPOTTER",
     "intal_rate": 18.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 20.0
   },
   "JOSE BERNAL": {
-    "position": "MECH",
+    "position": "MECHANIC",
     "intal_rate": 26.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 27.0
   },
   "KARLILI FUENTES": {
     "position": "SPOTTER",
@@ -484,16 +495,20 @@
   "KENDI ROMERO": {
     "position": "SPOTTER",
     "intal_rate": 17.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 20.0
   },
   "LUSVIN OROZCO": {
-    "position": "MECH",
-    "last_seen": "2026-09-22"
+    "position": "MECHANIC",
+    "last_seen": "2026-09-22",
+    "intal_rate": 25.0,
+    "rate": 27.0
   },
   "MARTIN PONCE": {
     "position": "HELPER",
     "intal_rate": 19.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 24.0
   },
   "MIRNA PLEITZ": {
     "position": "FINISHER",
@@ -503,17 +518,20 @@
   "NANCY RANGEL": {
     "position": "SPOTTER",
     "intal_rate": 16.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 20.0
   },
   "OMAR VILLAN": {
-    "position": "FINISHER",
+    "position": "MECHANIC",
     "intal_rate": 21.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 27.0
   },
   "OSCAR MARTINEZ": {
-    "position": "MECH",
+    "position": "MECHANIC",
     "intal_rate": 22.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 27.0
   },
   "PATRICIA GARCIA": {
     "position": "HELPER",
@@ -524,22 +542,26 @@
   "SARA HERNANDEZ": {
     "position": "HELPER",
     "intal_rate": 18.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 24.0
   },
   "SILVIA JIMENEZ": {
     "position": "SPOTTER",
     "intal_rate": 16.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 20.0
   },
   "SOLEDAD VASQUEZ": {
-    "position": "FINISHER",
+    "position": "MECHANIC",
     "intal_rate": 21.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 27.0
   },
   "VICTOR MORALES": {
-    "position": "MECH",
+    "position": "MECHANIC",
     "intal_rate": 22.0,
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "rate": 27.0
   },
   "YEFERSON DAVID CRESPO": {
     "position": "HELPER",

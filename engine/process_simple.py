@@ -117,16 +117,16 @@ def process(source_ws, dest_ws, profile) -> ProcessResult:
 
 
 def write_result(dest_ws, profile, result: ProcessResult):
-    from engine.xlsx_writer import clear_row_fill
+    from engine.xlsx_writer import apply_position_fill
 
-    # la plantilla de esta semana suele ser una copia de la salida de la
-    # semana pasada, asi que cualquier color que haya quedado puesto en
-    # una fila (a mano, o de una version vieja de esta app) se arrastraria
-    # para siempre si no se limpia aca -- se quita ANTES de escribir nada,
-    # sobre todo el roster que ya existia (matcheado o no), para que cada
-    # corrida salga sin colores sueltos sin significado. El unico color
-    # que se pone a proposito sigue siendo el amarillo de "sin tarifa
-    # confirmada" en add_missing_employees.
+    # cada fila del roster se colorea segun la posicion de esa persona
+    # (HELPER azul, SAFETY verde, FOREMAN gris, SPOTTER durazno, MECHANIC
+    # blanco -- ver POSITION_FILL_RGB), para diferenciarlas de un vistazo.
+    # Se reaplica SIEMPRE, sobre TODO el roster que ya existia (matcheado
+    # o no), porque la plantilla de esta semana suele ser una copia de la
+    # semana pasada y puede traer colores sueltos/viejos sin relacion con
+    # la posicion real de hoy (a mano, o de una version vieja de esta
+    # app) -- asi cada corrida queda con el color correcto y consistente.
     fill_cols = [profile.dest_name_col, profile.dest_intal_rate_reg_col, profile.dest_rate_reg_col,
                  profile.dest_reg_col, profile.dest_ot_col, *profile.dest_day_cols]
     if profile.dest_skill_col:
@@ -136,8 +136,10 @@ def write_result(dest_ws, profile, result: ProcessResult):
     fill_col_start, fill_col_end = 1, max(fill_cols)
     for row in range(profile.dest_data_start_row, profile.dest_data_end_row + 1):
         name = dest_ws.cell(row, profile.dest_name_col).value
-        if name and str(name).strip():
-            clear_row_fill(dest_ws, row, fill_col_start, fill_col_end)
+        if not name or not str(name).strip():
+            continue
+        position = dest_ws.cell(row, profile.dest_skill_col).value if profile.dest_skill_col else None
+        apply_position_fill(dest_ws, row, fill_col_start, fill_col_end, position, profile.merge_positions)
 
     for row, emp in result.filled_rows.items():
         for i, col in enumerate(profile.dest_day_cols):
@@ -186,7 +188,7 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
 
     Devuelve la lista de (row, SourceEmployee, tiene_intal_rate_vigente).
     """
-    from engine.xlsx_writer import insert_rows_preserving_formulas_multi, extend_sum_ranges, fix_sum_range_start, highlight_row_yellow, rebase_formula_row
+    from engine.xlsx_writer import insert_rows_preserving_formulas_multi, extend_sum_ranges, fix_sum_range_start, highlight_row_yellow, apply_position_fill, rebase_formula_row
     from engine.rate_store import lookup, is_stale, position_standard_rate
 
     if not missing_people:
@@ -214,6 +216,7 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
         written_cols.add(profile.dest_skill_col)
     if profile.dest_row_num_col:
         written_cols.add(profile.dest_row_num_col)
+    fill_col_start, fill_col_end = 1, max(written_cols)
 
     # la plantilla se organiza por orden alfabetico (por primer nombre) --
     # cada persona nueva se inserta en su lugar, no amontonada al final.
@@ -315,7 +318,12 @@ def add_missing_employees(dest_ws, profile, missing_people: list,
             dest_ws.cell(row, c).value = rebase_formula_row(formula, style_row_value, row)
 
         if not has_intal_rate:
+            # sin tarifa confirmada: el amarillo de "revisar a mano" manda
+            # sobre el color de posicion, es una alerta mas urgente.
             highlight_row_yellow(dest_ws, row, profile.dest_name_col, profile.dest_ot_col)
+        else:
+            position = emp.skill or position_hint
+            apply_position_fill(dest_ws, row, fill_col_start, fill_col_end, position, profile.merge_positions)
         added.append((row, emp, has_intal_rate))
 
     # renumerar la columna "No" de corrido (1,2,3...) sobre el roster ya
@@ -476,3 +484,41 @@ def write_invoice_totals(dest_ws, profile, breakdown: dict) -> bool:
             break
 
     return updated
+
+
+def color_position_legend(dest_ws, profile, band_width: int = 5) -> bool:
+    """
+    Debajo del roster suele haber, ademas del cuadro de invoice (u otro
+    resumen tipo "AVERAGE"), filas etiquetadas SOLO con el nombre de una
+    posicion (ej. "SPOTTER", "MECHANIC", "HELPER" con su tarifa promedio
+    al lado) -- funcionan como leyenda de los mismos colores que se usan
+    en el roster de arriba (POSITION_FILL_RGB). Busca esas filas y les
+    aplica el mismo color, para que la leyenda coincida con el roster.
+
+    A diferencia de write_invoice_totals, aqui la etiqueta es la posicion
+    SOLA (sin "REG"/"OT"/"HRS" al lado), asi que no reusa esa busqueda.
+
+    Devuelve True si coloreo alguna fila.
+    """
+    from engine.xlsx_writer import apply_position_fill, POSITION_FILL_RGB
+
+    search_start = (profile.dest_totals_row or profile.dest_data_end_row) + 1
+    search_end = min(search_start + 60, dest_ws.max_row)
+    if search_start > search_end:
+        return False
+
+    known = set(POSITION_FILL_RGB) | set(profile.merge_positions) | set(profile.merge_positions.values())
+    colored = False
+    for r in range(search_start, search_end + 1):
+        for c in range(1, dest_ws.max_column + 1):
+            label = dest_ws.cell(r, c).value
+            if not isinstance(label, str) or not label.strip():
+                continue
+            if label.strip().upper() not in known:
+                continue
+            apply_position_fill(dest_ws, r, c, min(c + band_width - 1, dest_ws.max_column),
+                                 label, profile.merge_positions)
+            colored = True
+            break
+
+    return colored

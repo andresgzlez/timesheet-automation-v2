@@ -1150,7 +1150,8 @@
   },
   "GUADALUPE DIAZ": {
     "position": "FINISHER",
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "intal_rate": 21.0
   },
   "IRVING BERNAL": {
     "position": "HELPER",
@@ -1184,7 +1185,8 @@
   },
   "LUSVIN OROZCO": {
     "position": "MECH",
-    "last_seen": "2026-09-22"
+    "last_seen": "2026-09-22",
+    "intal_rate": 25.0
   },
   "MARTIN PONCE": {
     "position": "HELPER",

@@ -14,7 +14,7 @@ la deteccion falla (formato realmente distinto), avisa en vez de adivinar.
 from profiles.schema import SimpleWeeklyProfile
 from engine.autodetect import detect_source_layout, detect_dest_layout, detect_roster_range
 
-DEFAULT_MERGE_POSITIONS = {"FINISHER": "MECHANIC"}
+DEFAULT_MERGE_POSITIONS = {"FINISHER": "MECHANIC", "MECH": "MECHANIC", "LABORER": "LABOR"}
 
 
 def build_profile_auto(project_name: str, source_ws, dest_ws, dest_sheet_name: str,
