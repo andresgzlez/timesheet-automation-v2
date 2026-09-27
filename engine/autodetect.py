@@ -139,16 +139,32 @@ def detect_dest_layout(ws) -> DetectedLayout:
 
 def detect_roster_range(ws, name_col: int, data_start_row: int) -> tuple[int, int, int | None]:
     """Devuelve (primera_fila, ultima_fila, fila_de_totales) escaneando hacia
-    abajo desde data_start_row hasta encontrar una fila sin nombre."""
+    abajo desde data_start_row.
+
+    Tolera huecos sueltos en medio del roster (una fila en blanco por
+    separador visual, alguien que se borro a mano, etc.) -- si se cortara
+    en la PRIMERA fila sin nombre, todo lo que hay despues del hueco queda
+    invisible para el resto del programa: no se matchea, no se le borran
+    horas viejas si no trabajo, no se renumera (fue un bug real: un roster
+    de 43 personas donde solo las primeras 4, antes de un hueco, se
+    procesaban -- las otras 39 se quedaban congeladas con los datos de la
+    semana anterior). Por eso solo se considera terminado el roster
+    despues de varias filas en blanco SEGUIDAS.
+    """
+    MAX_BLANK_RUN = 5
     r = data_start_row
     last_with_name = None
+    blank_run = 0
     while r < ws.max_row + 5:
         name = ws.cell(r, name_col).value
         if name and str(name).strip():
             last_with_name = r
-            r += 1
+            blank_run = 0
         else:
-            break
+            blank_run += 1
+            if blank_run > MAX_BLANK_RUN:
+                break
+        r += 1
     if last_with_name is None:
         raise ValueError("No se detecto ningun empleado en el roster destino")
 
