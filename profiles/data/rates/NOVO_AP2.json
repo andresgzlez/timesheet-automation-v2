@@ -39,7 +39,7 @@
     "position": "MECHANIC",
     "intal_rate": 22.0,
     "rate": 27.0,
-    "last_seen": "2026-09-20"
+    "last_seen": "2026-09-27"
   },
   "JORGE ROMUALDO SANDOVAL": {
     "position": "MECHANIC",
@@ -87,7 +87,7 @@
     "position": "SPOTTER",
     "intal_rate": 16.0,
     "rate": 20.0,
-    "last_seen": "2026-09-20"
+    "last_seen": "2026-09-27"
   },
   "YEINI RAMIREZ FUENTES": {
     "position": "MECHANIC",
@@ -117,7 +117,7 @@
     "position": "MECHANIC",
     "intal_rate": 23.0,
     "rate": 27.0,
-    "last_seen": "2026-09-20"
+    "last_seen": "2026-09-27"
   },
   "ALEXI HERNANDEZ VASQUEZ": {
     "position": "MECHANIC",
@@ -142,5 +142,95 @@
     "intal_rate": 20.0,
     "rate": 20.0,
     "last_seen": "2026-09-20"
+  },
+  "ALEXI HERNANDEZ": {
+    "position": "MECHANIC",
+    "intal_rate": 23.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-27"
+  },
+  "ASTRID PADILLA": {
+    "position": "SPOTTER",
+    "intal_rate": 16.0,
+    "rate": 20.0,
+    "last_seen": "2026-09-27"
+  },
+  "CRISTIAN NAAL": {
+    "position": "MECHANIC",
+    "intal_rate": 23.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-27"
+  },
+  "DAVID REYES": {
+    "position": "HELPER",
+    "intal_rate": 19.0,
+    "rate": 24.0,
+    "last_seen": "2026-09-27"
+  },
+  "DINORA CRUZ": {
+    "position": "MECHANIC",
+    "intal_rate": 25.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-27"
+  },
+  "ELFEGO RABANALES": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-27"
+  },
+  "GREACE BERMUDEZ": {
+    "position": "SPOTTER",
+    "intal_rate": 17.0,
+    "rate": 20.0,
+    "last_seen": "2026-09-27"
+  },
+  "JORGE SANDOVAL": {
+    "position": "MECHANIC",
+    "intal_rate": 21.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-27"
+  },
+  "JOSE PEREZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-27"
+  },
+  "JUAN LUIS GARCIA": {
+    "position": "MECHANIC",
+    "intal_rate": 23.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-27"
+  },
+  "KATIA ROMERO": {
+    "position": "SPOTTER",
+    "intal_rate": 16.0,
+    "rate": 20.0,
+    "last_seen": "2026-09-27"
+  },
+  "LICSA URBINA": {
+    "position": "SPOTTER",
+    "intal_rate": 20.0,
+    "rate": 20.0,
+    "last_seen": "2026-09-27"
+  },
+  "NANCY RANGEL": {
+    "position": "SPOTTER",
+    "intal_rate": 16.0,
+    "rate": 20.0,
+    "last_seen": "2026-09-27"
+  },
+  "VICTORIA SAUCEDO": {
+    "position": "HELPER",
+    "intal_rate": 18.0,
+    "rate": 24.0,
+    "last_seen": "2026-09-27"
+  },
+  "YEINI RAMIREZ": {
+    "position": "MECHANIC",
+    "intal_rate": 22.0,
+    "rate": 27.0,
+    "last_seen": "2026-09-27"
   }
 }
